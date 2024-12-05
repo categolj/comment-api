@@ -7,6 +7,7 @@ import React, {ComponentPropsWithoutRef} from "react";
 const Menu = DropdownMenu.Root;
 const Trigger = DropdownMenu.Trigger;
 
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 interface IMenuContent
     extends ComponentPropsWithoutRef<typeof DropdownMenu.Content> {
 }
