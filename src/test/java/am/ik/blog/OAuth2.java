@@ -47,8 +47,8 @@ public final class OAuth2 {
 			.split("=")[1];
 	}
 
-	public static String authorizationCodeFlow(URI issuerUrl, RestClient restClient, User user, Client client, URI redirectUri,
-			Set<String> scopes) {
+	public static String authorizationCodeFlow(URI issuerUrl, RestClient restClient, User user, Client client,
+			URI redirectUri, Set<String> scopes) {
 		String jsessionId = formLogin(URI.create(issuerUrl + "/login"), restClient, user);
 		JsonNode openIdConfiguration = Objects.requireNonNull(
 				restClient.get().uri(issuerUrl + "/.well-known/openid-configuration").retrieve().body(JsonNode.class));

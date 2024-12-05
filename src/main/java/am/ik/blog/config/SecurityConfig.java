@@ -33,7 +33,7 @@ public class SecurityConfig {
 		return http.securityMatcher("/admin/**", "/oauth2/**", "/login/**", "/logout")
 			.authorizeHttpRequests(authorize -> authorize
 			// @formatter:off
-					.requestMatchers("/admin/whoami").authenticated()
+					.requestMatchers("/admin/login", "/admin/whoami").authenticated()
 					.requestMatchers("/admin/**").hasRole("ADMIN"))
 			// @formatter:on
 			.oauth2Login(Customizer.withDefaults())
@@ -47,7 +47,7 @@ public class SecurityConfig {
 		return http.authorizeHttpRequests(authorize -> authorize
 		// @formatter:off
 				.requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
-				.requestMatchers("/*.css","/*.js", "/*.ico", "/*.png").permitAll()
+				.requestMatchers("/","/assets/*", "/*.html","/*.css","/*.js", "/*.ico", "/*.png").permitAll()
 				.requestMatchers(HttpMethod.GET, "/entries/{entryId}/comments").permitAll()
 				.anyRequest().authenticated()
 		// @formatter:on
