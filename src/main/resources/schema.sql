@@ -18,9 +18,9 @@ CREATE TABLE IF NOT EXISTS comment
     FOREIGN KEY (commenter_id) REFERENCES commenter (id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_comments_entry_id ON comment (entry_id);
-CREATE INDEX idx_comments_user_id ON comment (commenter_id);
-CREATE INDEX idx_comments_status ON comment (status);
+CREATE INDEX IF NOT EXISTS idx_comments_entry_id ON comment (entry_id);
+CREATE INDEX IF NOT EXISTS idx_comments_user_id ON comment (commenter_id);
+CREATE INDEX IF NOT EXISTS idx_comments_status ON comment (status);
 
 -- spring modulith
 
