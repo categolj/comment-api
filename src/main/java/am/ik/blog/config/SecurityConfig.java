@@ -37,7 +37,7 @@ public class SecurityConfig {
 					.requestMatchers("/admin/**").hasRole("ADMIN"))
 			// @formatter:on
 			.oauth2Login(Customizer.withDefaults())
-			.csrf(csrf -> csrf.ignoringRequestMatchers("/admin/**"))
+			.csrf(Customizer.withDefaults())
 			.build();
 	}
 

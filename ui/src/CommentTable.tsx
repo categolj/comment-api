@@ -6,7 +6,11 @@ import {Text} from "./retro-ui/Text.tsx";
 import ReactTimeAgo from "react-time-ago";
 import {Badge} from "./retro-ui/Badge.tsx";
 
-const CommentTable: React.FC = () => {
+export interface CommentTableProps {
+    csrfToken: string
+}
+
+const CommentTable: React.FC<CommentTableProps> = ({csrfToken}) => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -62,7 +66,10 @@ const CommentTable: React.FC = () => {
         try {
             const response = await fetch(`/admin/comments/${id}`, {
                 method: 'PATCH',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
                 body: JSON.stringify({status}),
             });
             checkResponse(response);
@@ -84,6 +91,9 @@ const CommentTable: React.FC = () => {
         try {
             const response = await fetch(`/admin/comments/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                }
             });
             checkResponse(response);
             if (!response.ok) {

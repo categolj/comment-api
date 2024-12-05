@@ -14,6 +14,8 @@ interface GoogleUser {
 
 export const Comments: React.FC = () => {
     const [user, setUser] = useState<GoogleUser | null>(null);
+    const [csrfToken, setCsrfToken] = useState<string>('');
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -21,6 +23,7 @@ export const Comments: React.FC = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setUser(data || null);
+                    setCsrfToken(data.csrfToken);
                 } else {
                     setUser(null);
                 }
@@ -56,7 +59,7 @@ export const Comments: React.FC = () => {
                         )}
                     </div>
                 </div>
-                <CommentTable/>
+                <CommentTable csrfToken={csrfToken}/>
             </>
         ) : (
             <Button onClick={() => {

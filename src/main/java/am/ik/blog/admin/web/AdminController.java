@@ -3,11 +3,14 @@ package am.ik.blog.admin.web;
 import am.ik.blog.admin.IdTokenInterceptor;
 import am.ik.blog.comment.Comment;
 import am.ik.blog.comment.CommentRepository;
+import am.ik.blog.comment.Commenter;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,8 +35,12 @@ public class AdminController {
 	}
 
 	@GetMapping(path = "/admin/whoami", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Object hello() {
-		return this.restClient.get().uri("/whoami").retrieve().body(byte[].class);
+	public Whoami whoami(CsrfToken csrfToken) {
+		Commenter commenter = this.restClient.get().uri("/whoami").retrieve().body(Commenter.class);
+		return new Whoami(commenter, csrfToken.getToken());
+	}
+
+	record Whoami(@JsonUnwrapped Commenter commenter, String csrfToken) {
 	}
 
 	@GetMapping(path = "/admin/login", params = "redirect_path", produces = MediaType.APPLICATION_JSON_VALUE)
