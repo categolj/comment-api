@@ -3,16 +3,15 @@ package am.ik.blog.comment;
 import am.ik.blog.CommentApiProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
-import java.util.Objects;
+
 import java.util.Optional;
 
 @Service
@@ -49,6 +48,11 @@ public class CommentService {
 		Comment commented = this.commentRepository.save(comment);
 		log.info("Created comment {}", commented);
 		return commented;
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	public Iterable<Comment> listAll() {
+		return this.commentRepository.findAll(Sort.by(Sort.Order.asc("createdAt")));
 	}
 
 	@PostAuthorize("returnObject.orElse(null)?.commenter.id == authentication.name")

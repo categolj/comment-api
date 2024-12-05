@@ -47,6 +47,11 @@ public class CommentController {
 			.toList();
 	}
 
+	@GetMapping(path = "/comments")
+	public Iterable<Comment> listComments() {
+		return this.commentService.listAll();
+	}
+
 	@PatchMapping(path = "/comments/{commentId}")
 	public Optional<Comment> updateComment(@PathVariable Long commentId, @RequestBody CommentUpdateRequest request) {
 		return this.commentService.changeStatus(commentId, request.status());
