@@ -47,7 +47,7 @@ public class SecurityConfig {
 		return http.authorizeHttpRequests(authorize -> authorize
 		// @formatter:off
 				.requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
-				.requestMatchers("/","/assets/*", "/*.html","/*.css","/*.js", "/*.ico", "/*.png").permitAll()
+				.requestMatchers("/","/assets/*", "/*.html","/*.css","/*.js", "/*.ico", "/*.png", "/error").permitAll()
 				.requestMatchers(HttpMethod.GET, "/entries/{entryId}/comments").permitAll()
 				.anyRequest().authenticated()
 		// @formatter:on
