@@ -22,8 +22,6 @@ import java.net.URI;
 @RestController
 public class AdminController {
 
-	public static final int VITE_DEV_PORT = 5174;
-
 	private final RestClient restClient;
 
 	private final CommentRepository commentRepository;
