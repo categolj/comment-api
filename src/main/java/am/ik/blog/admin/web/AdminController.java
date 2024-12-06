@@ -22,6 +22,8 @@ import java.net.URI;
 @RestController
 public class AdminController {
 
+	public static final int VITE_DEV_PORT = 5174;
+
 	private final RestClient restClient;
 
 	private final CommentRepository commentRepository;
@@ -52,7 +54,7 @@ public class AdminController {
 		}
 		UriComponents uriComponents = uriComponentsBuilder.path(redirectPath).build();
 		String location;
-		if (referer.getPort() == 5174) {
+		if (referer.getPort() == VITE_DEV_PORT) {
 			// behind the vite proxy in the dev-mode
 			location = UriComponentsBuilder.fromUriString(uriComponents.toUriString())
 				.port(referer.getPort())
