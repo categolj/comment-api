@@ -54,11 +54,10 @@ public class AdminController {
 		}
 		UriComponents uriComponents = uriComponentsBuilder.path(redirectPath).build();
 		String location;
-		if (referer.getPort() == VITE_DEV_PORT) {
+		int port = referer.getPort();
+		if (isViteDevPort(port)) {
 			// behind the vite proxy in the dev-mode
-			location = UriComponentsBuilder.fromUriString(uriComponents.toUriString())
-				.port(referer.getPort())
-				.toUriString();
+			location = UriComponentsBuilder.fromUriString(uriComponents.toUriString()).port(port).toUriString();
 		}
 		else {
 			location = uriComponents.toUriString();
@@ -89,6 +88,10 @@ public class AdminController {
 	}
 
 	public record CommentUpdateRequest(Comment.Status status) {
+	}
+
+	static boolean isViteDevPort(int port) {
+		return port >= 5170 && port <= 5179;
 	}
 
 }
