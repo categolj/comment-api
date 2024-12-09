@@ -5,20 +5,19 @@ import {Button} from "./retro-ui/Button.tsx";
 import {Text} from "./retro-ui/Text.tsx";
 import ReactTimeAgo from "react-time-ago";
 import {Badge} from "./retro-ui/Badge.tsx";
+import useSWR, {mutate} from 'swr';
 
 export interface CommentTableProps {
     csrfToken: string
 }
 
 const CommentTable: React.FC<CommentTableProps> = ({csrfToken}) => {
-    const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [statusFilter, setStatusFilter] = useState<string>('ALL');
     const [entryIdFilter, setEntryIdFilter] = useState<string>('');
     const [dialogContent, setDialogContent] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const [visibleEmails, setVisibleEmails] = useState<{ [id: string]: boolean }>({});
-
     const checkResponse = (response: Response) => {
         if (response.status === 302) {
             const location = response.headers.get('Location');
@@ -29,25 +28,27 @@ const CommentTable: React.FC<CommentTableProps> = ({csrfToken}) => {
             setDialogContent('You are not allowed to manage comments!');
         }
     }
+    const fetcher = (url: string) => fetch(url).then((res) => {
+        checkResponse(res);
+        if (!res.ok) {
+            throw new Error('Failed to fetch comments');
+        }
+        return res.json();
+    });
+    const {data: comments = [], error} = useSWR<Comment[]>('/admin/comments', fetcher, {
+        refreshInterval: 30000,
+    });
 
     useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                const response = await fetch('/admin/comments');
-                checkResponse(response);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch comments');
-                }
-                const data: Comment[] = await response.json();
-                setComments(data);
-            } catch (error) {
-                console.error('Error fetching comments:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchComments();
-    }, []);
+        if (error) {
+            console.error('Error fetching comments:', error);
+            setLoading(false);
+        } else if (!comments) {
+            setLoading(true);
+        } else {
+            setLoading(false);
+        }
+    }, [comments, error]);
 
     const filteredComments = comments.filter((comment) => {
         return (
@@ -76,12 +77,7 @@ const CommentTable: React.FC<CommentTableProps> = ({csrfToken}) => {
             if (!response.ok) {
                 throw new Error('Failed to update status');
             }
-
-            setComments((prev) =>
-                prev.map((comment) =>
-                    comment.commentId === id ? {...comment, status} : comment
-                )
-            );
+            await mutate('/admin/comments');
         } catch (error) {
             console.error('Error updating status:', error);
         }
@@ -99,7 +95,7 @@ const CommentTable: React.FC<CommentTableProps> = ({csrfToken}) => {
             if (!response.ok) {
                 throw new Error('Failed to delete comment');
             }
-            setComments((prev) => prev.filter((comment) => comment.commentId !== id));
+            await mutate('/admin/comments');
         } catch (error) {
             console.error('Error deleting comment:', error);
         }
@@ -113,7 +109,7 @@ const CommentTable: React.FC<CommentTableProps> = ({csrfToken}) => {
     };
 
 
-    if (loading) {
+    if (loading || !comments) {
         return <div className="text-center text-gray-500 mt-10">Loading comments...</div>;
     }
 
