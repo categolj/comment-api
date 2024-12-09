@@ -29,7 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = { "logging.level.org.springframework.web.client.RestTemplate=info",
-				"spring.http.client.redirects=dont_follow", "comment.admins=test@example.com" })
+				"spring.http.client.redirects=dont_follow", "comment.admins=test@example.com",
+				"comment.google-chat-webhook-url=https://httpbin.org/post" })
 @Import({ TestcontainersConfiguration.class, MockConfig.class })
 @Testcontainers(disabledWithoutDocker = true)
 class CommentControllerIntegrationTest {

@@ -3,6 +3,7 @@ package am.ik.blog.comment;
 import am.ik.blog.CommentApiProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,8 @@ public class CommentService {
 
 	private final CommenterRepository commenterRepository;
 
+	private final ApplicationEventPublisher eventPublisher;
+
 	private final CommentApiProps props;
 
 	private final Clock clock;
@@ -28,9 +31,10 @@ public class CommentService {
 	private final Logger log = LoggerFactory.getLogger(CommentService.class);
 
 	public CommentService(CommentRepository commentRepository, CommenterRepository commenterRepository,
-			CommentApiProps props, Clock clock) {
+			ApplicationEventPublisher eventPublisher, CommentApiProps props, Clock clock) {
 		this.commentRepository = commentRepository;
 		this.commenterRepository = commenterRepository;
+		this.eventPublisher = eventPublisher;
 		this.props = props;
 		this.clock = clock;
 	}
@@ -46,6 +50,7 @@ public class CommentService {
 			.createdAt(OffsetDateTime.now(this.clock))
 			.build();
 		Comment commented = this.commentRepository.save(comment);
+		this.eventPublisher.publishEvent(new CommentCreatedEvent(comment));
 		log.info("Created comment {}", commented);
 		return commented;
 	}
@@ -64,8 +69,11 @@ public class CommentService {
 	@PreAuthorize("hasRole('ADMIN')")
 	public Optional<Comment> changeStatus(Long commentId, Comment.Status status) {
 		return this.commentRepository.findById(commentId).map(comment -> {
+			Comment.Status previousStatus = comment.getStatus();
 			comment.setStatus(status);
-			return this.commentRepository.save(comment);
+			Comment saved = this.commentRepository.save(comment);
+			this.eventPublisher.publishEvent(new CommentStatusChangedEvent(saved, previousStatus));
+			return saved;
 		});
 	}
 

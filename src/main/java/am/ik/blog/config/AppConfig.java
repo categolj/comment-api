@@ -2,6 +2,7 @@ package am.ik.blog.config;
 
 import java.time.Clock;
 
+import org.springframework.boot.web.client.RestClientCustomizer;
 import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 
 import org.springframework.boot.web.client.RestTemplateCustomizer;
@@ -20,6 +21,12 @@ public class AppConfig {
 	public RestTemplateCustomizer restTemplateCustomizer(
 			LogbookClientHttpRequestInterceptor logbookClientHttpRequestInterceptor) {
 		return restTemplate -> restTemplate.getInterceptors().addFirst(logbookClientHttpRequestInterceptor);
+	}
+
+	@Bean
+	public RestClientCustomizer restClientCustomizer(
+			LogbookClientHttpRequestInterceptor logbookClientHttpRequestInterceptor) {
+		return restClient -> restClient.requestInterceptor(logbookClientHttpRequestInterceptor);
 	}
 
 }
