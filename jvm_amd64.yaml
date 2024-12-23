@@ -1,2 +1,2 @@
-image: ghcr.io/categolj/comment-api@sha256:a6b5b244cce965e0362cc71227cfb9abfa894514b12e48c070f5c88f7cdb1bbe
-git_revision: d88ee40ace3acd6f7ab2e129ac1b3d5184ae3fe9
+image: ghcr.io/categolj/comment-api@sha256:febd3b9cb06e4e692ed286c3c850d14068a7415b01a8c5d089ffb4966efab6c5
+git_revision: 755d8df0caea4a772223ae4d23d3df9bdcee0eee
