@@ -22,6 +22,7 @@ public class BraveConfig {
 			.instrumentationScope(new InstrumentationScope("org.springframework.boot", SpringBootVersion.getVersion()))
 			.resourceAttributes(properties.getResourceAttributes())
 			.tagToAttributes(TagToAttributes.newBuilder()
+				.withDefaults()
 				.tagToAttribute("method", "http.request.method")
 				.tagToAttribute("uri", (builder, value) -> {
 					Span span = builder.build();
