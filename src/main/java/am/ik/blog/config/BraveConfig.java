@@ -25,10 +25,10 @@ public class BraveConfig {
 				.withDefaults()
 				.tagToAttribute("method", "http.request.method")
 				.tagToAttribute("uri", (builder, value) -> {
-					Span span = builder.build();
 					if ("none".equals(value)) {
 						return;
 					}
+					Span span = builder.build();
 					if (span.getKind() == Span.SpanKind.SPAN_KIND_SERVER) {
 						builder.addAttributes(TagToAttribute.stringAttribute("http.route", value));
 					}
