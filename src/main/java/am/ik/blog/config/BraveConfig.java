@@ -37,7 +37,6 @@ public class BraveConfig {
 				})
 				.tagToAttribute("jdbc.query[0]", "db.query.text")
 				.tagToAttribute("jdbc.row-count", "db.response.returned_rows")
-				.tagToAttribute("Server Address", "server.address")
 				.build())
 			.build();
 	}
