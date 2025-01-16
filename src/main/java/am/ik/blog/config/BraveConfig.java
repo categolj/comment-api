@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import zipkin2.reporter.Encoding;
 import zipkin2.reporter.otel.brave.InstrumentationScope;
 import zipkin2.reporter.otel.brave.OtlpProtoV1Encoder;
+import zipkin2.reporter.otel.brave.TagToAttributes;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(OpenTelemetryProperties.class)
@@ -18,6 +19,13 @@ public class BraveConfig {
 		return OtlpProtoV1Encoder.newBuilder()
 			.instrumentationScope(new InstrumentationScope("org.springframework.boot", SpringBootVersion.getVersion()))
 			.resourceAttributes(properties.getResourceAttributes())
+			.tagToAttributes(TagToAttributes.newBuilder()
+				.tagToAttribute("method", "http.request.method")
+				.tagToAttribute("uri", "http.route")
+				.tagToAttribute("jdbc.query[0]", "db.query.text")
+				.tagToAttribute("jdbc.row-count", "db.response.returned_rows")
+				.tagToAttribute("Server Address", "server.address")
+				.build())
 			.build();
 	}
 
