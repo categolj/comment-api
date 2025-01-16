@@ -11,6 +11,9 @@ public class MicrometerConfig {
 	public MeterFilter meterFilter() {
 		return MeterFilter.deny(id -> {
 			String uri = id.getTag("uri");
+			if (uri == null) {
+				uri = id.getTag("url.path");
+			}
 			return uri != null && (uri.equals("/readyz") || uri.equals("/livez") || uri.startsWith("/actuator")
 					|| uri.startsWith("/_static"));
 		});
